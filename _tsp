@@ -1,0 +1,62 @@
+#compdef tsp
+
+# _tsp
+#
+# Copyright (c) 2022 endaaman
+#
+# This software may be modified and distributed under the terms
+# of the MIT license. See the LICENSE file for details.
+
+__tsp_nums() {
+  local -a _l=(${(@f)"$(seq 1 10)"})
+  _describe -t storages 'Storages' _l
+}
+
+__tsp_ids() {
+  local -a _l=(${(@f)"$(tsp | tail -n +2 | sed '/ / s/ /:/')"})
+  _describe -t ids 'ids' _l
+}
+
+_tsp() {
+  local context curcontext=$curcontext state line
+  declare -A opt_args
+
+  _arguments -C -A '-*' \
+    '-K[kill the task spooler server]' \
+    '-C[clear the list of finished jobs]' \
+    '-l[show the job list (default action)]' \
+    '-S[<num> get/set the number of max simultaneous jobs of the server.]:Nums:__tsp_nums' \
+    '-t[<id> "tail -n 10 -f" the output of the job. Last run if not specified.]:Ids:__tsp_ids' \
+    '-c[<id> like -t, but shows all the lines. Last run if not specified.]:Ids:__tsp_ids' \
+    '-p[<id> show the pid of the job. Last run if not specified.]:Ids:__tsp_ids' \
+    '-o[<id> show the output file. Of last job run, if not specified.]:Ids:__tsp_ids' \
+    '-i[<id> show job information. Of last job run, if not specified.]:Ids:__tsp_ids' \
+    '-s[<id> show the job state. Of the last added, if not specified.]:Ids:__tsp_ids' \
+    '-r[<id> remove a job. The last added, if not specified.]:Ids:__tsp_ids' \
+    '-w[<id> wait for a job. The last added, if not specified.]:Ids:__tsp_ids' \
+    '-k[<id> send SIGTERM to the job process group. The last run, if not specified.]:Ids:__tsp_ids' \
+    '-u[<id> put that job first. The last added, if not specified.]:Ids:__tsp_ids' \
+    '-U[<id-id>  swap two jobs in the queue.]:Ids:__tsp_ids' \
+    '-B[in case of full queue on the server, quit (2) instead of waiting.]' \
+    '-h[show help]' \
+    '-V[show the program version]'
+
+  # cf. https://unix.stackexchange.com/questions/686809/how-to-make-zsh-autocomplete-suggest-flags-of-the-inner-executable-of-a-wrapper
+  _arguments -S -A '-*' : \
+    '1:command: ' '*:: : _normal -p $service'
+
+  _arguments -C -A '-*' \
+    "-n[don't store the output of the command.]" \
+    "-E[Keep stderr apart, in a name like the output file, but adding '.e'.]" \
+    '-g[gzip the stored output (if not -n).]' \
+    "-f[don't fork into background.]" \
+    '-m[send the output by e-mail (uses sendmail).]' \
+    '-d[the job will be run only if the job before ends well]' \
+    '-D[<id>  the job will be run only if the job of given id ends well.]:Ids:__tsp_ids' \
+    '-L[<lab> name this task with a label, to be distinguished on listing.]:Labs:__tsp_labs' \
+    '-N[<num> number of slots required by the job (1 default).]:Nums:__tsp_nums'
+
+  return 0
+}
+
+compdef _tsp tsp

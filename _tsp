@@ -75,6 +75,11 @@ _tsp() {
     '-B[in case of full queue on the server, quit (2) instead of waiting.]' \
     '-h[show help]' \
     '-V[show the program version]' \
+
+  # TODO: group option
+  # cf. https://unix.stackexchange.com/questions/686809/how-to-make-zsh-autocomplete-suggest-flags-of-the-inner-executable-of-a-wrapper
+  _arguments -A '-*' : \
+    '1:command: ' '*:: : _normal -p $service' \
     "-n[don't store the output of the command.]" \
     "-E[Keep stderr apart, in a name like the output file, but adding '.e'.]" \
     '-g[gzip the stored output (if not -n).]' \
@@ -84,11 +89,6 @@ _tsp() {
     '-D[<id>  the job will be run only if the job of given id ends well.]:Ids:__tsp_all_ids' \
     '-L[<lab> name this task with a label, to be distinguished on listing.]:Labs:__tsp_labs' \
     '-N[<num> number of slots required by the job (1 default).]:Nums:__tsp_nums'
-
-
-  # cf. https://unix.stackexchange.com/questions/686809/how-to-make-zsh-autocomplete-suggest-flags-of-the-inner-executable-of-a-wrapper
-  _arguments -S -A '-*' : \
-    '1:command: ' '*:: : _normal -p $service'
 
   return 0
 }

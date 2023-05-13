@@ -47,7 +47,7 @@ __tsp_active_ids() {
 __tsp_unfinised_ids() {
   _alternative \
     'running:Running:__tsp_running_ids' \
-    'finished:Finished:__tsp_finished_ids'
+    'finished:Finished:__tsp_queued_ids'
 }
 
 _tsp() {
